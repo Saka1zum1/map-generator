@@ -32,7 +32,8 @@ function parseGoogle(data: any): google.maps.StreetViewPanoramaData {
         const imageDate = `${imageYear}-${String(imageMonth).padStart(2, '0')}-01`;
 
         const historyRaw = data[1][0][5][0][8];
-        const linksRaw = data[1][0][5][0][3][0];
+        const linksRaw = data[1][0][5][0][6];
+        const nodes = data[1][0][5][0][3][0];
 
         const altitude = data[1][0][5][0][1][1][0]
 
@@ -55,7 +56,7 @@ function parseGoogle(data: any): google.maps.StreetViewPanoramaData {
         } catch (e) { try { shortDesc_raw = data[1][0][3][0][0] } catch (error) { } }
 
         const history = historyRaw ? (historyRaw.map((node: any) => ({
-            pano: linksRaw[node[0]],
+            pano: nodes[node[0]][0][1],
             date: new Date(`${node[1][0]}-${String(node[1][1]).padStart(2, '0')}-01`),
         })))
             : [];
@@ -69,8 +70,8 @@ function parseGoogle(data: any): google.maps.StreetViewPanoramaData {
                 country
             },
             links: linksRaw.map((link: any) => ({
-                pano: link[0][1],
-                heading: link[2][2][0] ?? 0,
+                pano: nodes[link[0]][0][1],
+                heading: link[1][3] ?? 0,
             })) ?? [],
             tiles: {
                 centerHeading: heading,
